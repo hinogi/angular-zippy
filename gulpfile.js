@@ -1,7 +1,8 @@
 var gulp = require('gulp');
 
 var PATHS = {
-    src: 'src/**/*.ts'
+    src: 'src/**/*.ts',
+    html: 'src/**/*.html'
 };
 
 gulp.task('clean', function (done) {
@@ -20,18 +21,26 @@ gulp.task('ts2js', function () {
     return tsResult.js.pipe(gulp.dest('dist'));
 });
 
-gulp.task('play', ['ts2js'], function () {
-    var http = require('http');
-    var connect = require('connect');
+gulp.task('html', function () {
+    return gulp.src(PATHS.html)
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('play', ['ts2js', 'html'], function () {
+    var express = require('express');
     var serveStatic = require('serve-static');
     var open = require('open');
 
-    var port = 9000, app;
+    var port = 9000;
+    var app = express();
 
+    gulp.watch(PATHS.html, ['html']);
     gulp.watch(PATHS.src, ['ts2js']);
 
-    app = connect().use(serveStatic(__dirname));
-    http.createServer(app).listen(port, function () {
+    app.use(serveStatic(__dirname));
+    app.use(serveStatic(__dirname + '/dist'));
+
+    app.listen(port, function () {
         open('http://localhost:' + port);
     });
 });

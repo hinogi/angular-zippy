@@ -5,14 +5,20 @@ import {Zippy} from './zippy';
 @Component({
     selector: 'hello-app',
     template: `
-        <zippy title="Details">
+        <zippy (open)="sayOpen()" (close)="sayClose()" title="Details">
             <p>Here's some detailed content.</p>
         </zippy>
     `,
     directives: [Zippy]
 })
 export class HelloApp {
-    name: string = 'World';
+    sayOpen() {
+        console.log('open!');
+    }
+
+    sayClose() {
+        console.log('close!')
+    }
 }
 
 bootstrap(HelloApp);
